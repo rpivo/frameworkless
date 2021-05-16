@@ -10,6 +10,7 @@ A collection of opinionated resources to build web apps without a framework. The
 
 - [Building A Local Development Server](https://github.com/rpivo/frameworkless/blob/main/development/buildingALocalDevelopmentServer.md)
 - [Getting Node to Treat Modules as ES Modules](https://github.com/rpivo/frameworkless/blob/main/development/gettingNodeToTreatModulesAsEsModules.md)
+- [Minifying Source Code During the Build Process](https://github.com/rpivo/frameworkless/blob/main/development/minifyingSourceCodeDuringTheBuildProcess.md)
 
 ### Scripts
 

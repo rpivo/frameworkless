@@ -1,6 +1,6 @@
 # frameworkless
 
-A collection of resources to build web apps without a framework.
+A collection of opinionated resources to build web apps without a framework.
 
 ## Development
 

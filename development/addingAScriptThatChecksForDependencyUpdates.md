@@ -1,5 +1,7 @@
 ## Adding a Script That Checks for Dependency Updates
 
+#### Last Updated: May 16, 2021
+
 This npm script uses the [npm-check-updates](https://www.npmjs.com/package/npm-check-updates) package to check if any updates are available for a project's dependencies.
 
 <hr />

@@ -1,5 +1,7 @@
 ## Initializing a Web App from index.html
 
+#### Last Updated: May 16, 2021
+
 The below example is one way to initialize a web app from inside an **index.html** file. This method uses ES Module syntax to import the main app code from an **index.js** file that's in the same directory as the **index.html** file. The main js code initializes the app by constructing a new `App` class instance.
 
 <hr />

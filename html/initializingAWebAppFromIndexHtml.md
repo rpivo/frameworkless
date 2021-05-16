@@ -22,7 +22,7 @@ Then, listen to the `"DOMContentLoaded"` event. This event will fire once the HT
     <main></main>
     <script type="module">
       import App from "./index.js";
-      document.addEventListener("DOMContentLoaded", new App());
+      document.addEventListener("DOMContentLoaded", () => new App());
     </script>
   </body>
 </html>

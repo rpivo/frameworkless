@@ -4,6 +4,7 @@ A collection of opinionated resources to build web apps without a framework. The
 
 - ES Modules.
 - Node LTS v14 or later.
+- Rollup.
 
 ## Development
 

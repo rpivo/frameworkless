@@ -1,4 +1,4 @@
-## Getting Node to Tread Modules as ES Modules
+## Getting Node to Treat Modules as ES Modules
 
 #### Last Updated: May 16, 2021
 

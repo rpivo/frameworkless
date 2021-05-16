@@ -1,6 +1,9 @@
 # frameworkless
 
-A collection of opinionated resources to build web apps without a framework.
+A collection of opinionated resources to build web apps without a framework. These resources assume these APIs & tools will be used:
+
+- ES Modules.
+- Node LTS v14 or later.
 
 ## Development
 

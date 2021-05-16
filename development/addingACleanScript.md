@@ -12,6 +12,14 @@ It can be extended to also copy any static assets to the build folder, or copy C
 
 <hr />
 
+First, add the build script to **package.json**. This runs the **clean.js** process with Node. The module can be kept in a **util/** directory at the root of the project.
+
+```json
+"clean": "node ./util/clean.js"
+```
+
+The following code will go inside **clean.js**.
+
 ```js
 import fs from "fs";
 import path from "path";

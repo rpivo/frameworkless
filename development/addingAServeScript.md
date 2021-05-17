@@ -12,7 +12,7 @@ You can add a `serve` script by using Node's `createServer()` method from the `h
 
 The `http.IncomingMessage` request object is used in the callback to read the URL that was requested (`req.url`).
 
-The `http.ServerResponse` response object is used to send response headers to the request using `res.writeHead()`, and to signal to the request that the response is complete by using `res.end()`.
+The `http.ServerResponse` response object is used to send response headers to the request using `res.writeHead()`, and to signal to the request that the response is complete by using `res.end()`. If the requested content is available, the content is sent as the response body while calling `res.end()`.
 
 Based on the request URL, the response headers will update the `contentType` variable so that the `Content-Type` response header will be appropriate for the requested content, (either, `css`, `javascript`, or `html`).
 

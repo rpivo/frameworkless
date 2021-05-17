@@ -7,8 +7,9 @@ This script:
 - Removes the output folder for a project (this could be something like `dist` or `build` or `lib`).
 - Remakes the folder.
 - Copies the entry file (`index.html`).
+- Copies each asset from a given assets folder.
 
-It can be extended to also copy any static assets to the build folder, or copy CSS or other files that may not need to be processed by a build tool like Rollup or Webpack.
+It can be extended to copy CSS or other files that may not need to be processed by a build tool like Rollup or Webpack.
 
 <hr />
 
@@ -25,9 +26,26 @@ import fs from "fs";
 import path from "path";
 
 const cwd = process.cwd();
+
+const assetsFolder = "assets";
 const distFolder = "dist";
 const srcFolder = "src";
 const entryFile = "index.html";
+
+/**
+ * ### copyAssets
+ * copies each asset from a given assets folder to the output folder.
+ */
+function copyAssets() {
+  const assets = fs.readdirSync(path.join(cwd, srcFolder, assetsFolder));
+
+  assets.forEach((asset) =>
+    fs.copyFileSync(
+      path.join(cwd, srcFolder, assetsFolder, asset),
+      path.join(cwd, distFolder, asset)
+    )
+  );
+}
 
 /**
  * ### copyEntryFile
@@ -57,6 +75,7 @@ function init() {
   console.log(`cleaning ${distFolder}.\n`);
   regenerateOutputFolder();
   copyEntryFile();
+  copyAssets();
   console.log(`${distFolder} cleaned.\n`);
 }
 

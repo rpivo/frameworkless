@@ -26,10 +26,12 @@ import path from "path";
 const outFolder = "dist";
 const port = 8000;
 
+// creates a new http.Server instance, and registers a callback with the `request` event.
 http
   .createServer((req, res) => {
     let filename = path.join(process.cwd(), outFolder, req.url);
 
+    // if the req.url is a file path, we can assume the request is for the index.html file.
     try {
       const stats = fs.statSync(filename);
       if (stats && stats.isDirectory()) filename += "index.html";
@@ -41,6 +43,8 @@ http
       return;
     }
 
+    // check what the req.url ends with, and set the Content-Type response header accordingly.
+    // read the contents of the requested file and send these contents as the response body.
     try {
       const contents = fs.readFileSync(filename, { encoding: "binary" });
 
@@ -57,6 +61,7 @@ http
       res.end(e + "\n");
     }
   })
+  // calls listen() on the http.Server instance, listening for requests at the given port.
   .listen(port);
 
 console.log(

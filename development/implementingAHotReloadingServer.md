@@ -2,73 +2,6 @@
 
 #### Last Updated: May 18, 2021
 
-**Builder.js**
-
-```js
-import { spawnSync } from "child_process";
-import EventEmitter from "events";
-import fs from "fs";
-import path from "path";
-
-export default class Builder extends EventEmitter {
-  constructor() {
-    super();
-
-    const cwd = process.cwd();
-
-    this.entryFile = path.join(cwd, "dist/index.html");
-    this.srcPath = path.join(cwd, "src");
-
-    this.options = {
-      cwd: this.srcPath,
-      stdio: "inherit",
-    };
-
-    this.build();
-    fs.watch(this.srcPath, { recursive: true }, this.checkDebounce);
-  }
-
-  /**
-   * ### build
-   * runs the clean script followed by the build script. clears the debounce value after these
-   * processes finish.
-   */
-  build = () => {
-    spawnSync("npm", ["run", "clean"], this.options);
-    spawnSync("npm", ["run", "build"], this.options);
-
-    if (process.env.NODE_ENV === "dev") this.injectEventSource();
-
-    console.log("\nwatching for changes...");
-
-    this.debounce = null;
-
-    this.emit("refresh");
-  };
-
-  /**
-   * ### checkDebounce
-   * if debounce is falsy, sets debounce to a setTimeout that calls build() after half a second.
-   */
-  checkDebounce = () => {
-    if (!this.debounce) this.debounce = setTimeout(this.build, 500);
-  };
-
-  /**
-   * ### injectEventSource
-   * when serving locally, the client will need an EventSource instance that will receive pings
-   * from the server. When it receives these pings, the client will refresh the page. This
-   * function injects the js in the entry file to add the EventSource for local development.
-   */
-  injectEventSource = () => {
-    let contents = fs.readFileSync(this.entryFile, { encoding: "utf-8" });
-    const eventSourceScript = `<script>const sse = new EventSource("/sse"); sse.onmessage = () => window.location.reload();</script>`;
-    contents = contents.replace(/\<\/body>/g, eventSourceScript + "</body>");
-    fs.writeFileSync(this.entryFile, contents);
-  };
-}
-```
-
 **clean.js**
 
 ```js
@@ -139,7 +72,7 @@ import { spawn } from "child_process";
 import fs from "fs";
 import http from "http";
 import path from "path";
-import Builder from "./Builder.js";
+import Watcher from "./Watcher.js";
 
 class Server {
   constructor() {
@@ -148,7 +81,7 @@ class Server {
     this.shouldReload = false;
     this.sseInterval = null;
 
-    this.builder = new Builder().on("refresh", () => {
+    this.watcher = new Watcher().on("refresh", () => {
       this.shouldReload = true;
     });
 
@@ -247,3 +180,78 @@ class Server {
 
 new Server();
 ```
+
+**Watcher.js**
+
+```js
+import { spawnSync } from "child_process";
+import EventEmitter from "events";
+import fs from "fs";
+import path from "path";
+
+export default class Watcher extends EventEmitter {
+  constructor() {
+    super();
+
+    const cwd = process.cwd();
+
+    this.entryFile = path.join(cwd, "dist/index.html");
+    this.srcPath = path.join(cwd, "src");
+
+    this.options = {
+      cwd: this.srcPath,
+      stdio: "inherit",
+    };
+
+    this.build();
+    fs.watch(this.srcPath, { recursive: true }, this.checkDebounce);
+  }
+
+  /**
+   * ### build
+   * runs the clean script followed by the build script. calls injectEventSource() to inject the
+   * EventSource js in the entry file. clears the debounce value after these processes finish.
+   */
+  build = () => {
+    spawnSync("npm", ["run", "clean"], this.options);
+    spawnSync("npm", ["run", "build"], this.options);
+
+    this.injectEventSource();
+
+    console.log("\nwatching for changes...");
+
+    this.debounce = null;
+
+    this.emit("refresh");
+  };
+
+  /**
+   * ### checkDebounce
+   * if debounce is falsy, sets debounce to a setTimeout that calls build() after half a second.
+   */
+  checkDebounce = () => {
+    if (!this.debounce) this.debounce = setTimeout(this.build, 500);
+  };
+
+  /**
+   * ### injectEventSource
+   * when serving locally, the client will need an EventSource instance that will receive pings
+   * from the server. When it receives these pings, the client will refresh the page. This
+   * function injects the js in the entry file to add the EventSource for local development.
+   */
+  injectEventSource = () => {
+    let contents = fs.readFileSync(this.entryFile, { encoding: "utf-8" });
+    const eventSourceScript = `<script>const sse = new EventSource("/sse"); sse.onmessage = () => window.location.reload();</script>`;
+    contents = contents.replace(/\<\/body>/g, eventSourceScript + "</body>");
+    fs.writeFileSync(this.entryFile, contents);
+  };
+}
+```
+
+### Resources
+
+- [Node / Child Process](https://nodejs.org/api/child_process.html)
+- [Node / Events](https://nodejs.org/api/events.html)
+- [Node / File System](https://nodejs.org/api/fs.html)
+- [Node / HTTP](https://nodejs.org/api/http.html)
+- [Node / Path](https://nodejs.org/api/path.html)

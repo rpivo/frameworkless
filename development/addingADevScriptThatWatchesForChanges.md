@@ -1,6 +1,6 @@
 ## Adding a Dev Script That Watches for Changes
 
-#### Last Updated: May 16, 2021
+#### Last Updated: May 18, 2021
 
 You can add a `dev` script that watches for changes in a specified source code folder by using the `watch` method from Node's `fs` module.
 
@@ -69,6 +69,6 @@ init();
 
 ### Resources
 
-- [Node / child Process](https://nodejs.org/api/child_process.html)
+- [Node / Child Process](https://nodejs.org/api/child_process.html)
 - [Node / File System](https://nodejs.org/api/fs.html)
 - [Node / Path](https://nodejs.org/api/path.html)

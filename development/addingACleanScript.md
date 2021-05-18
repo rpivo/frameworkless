@@ -68,7 +68,7 @@ function regenerateOutputFolder() {
 }
 
 /**
- * ### init
+ * ### clean
  * starts clean process and prints progress logs.
  */
 function clean() {

@@ -1,6 +1,6 @@
 ## Adding a Clean Script
 
-#### Last Updated: May 16, 2021
+#### Last Updated: May 18, 2021
 
 This script:
 
@@ -71,7 +71,7 @@ function regenerateOutputFolder() {
  * ### init
  * starts clean process and prints progress logs.
  */
-function init() {
+function clean() {
   console.log(`cleaning ${distFolder}.\n`);
   regenerateOutputFolder();
   copyEntryFile();
@@ -79,7 +79,7 @@ function init() {
   console.log(`${distFolder} cleaned.\n`);
 }
 
-init();
+clean();
 ```
 
 ### Resources

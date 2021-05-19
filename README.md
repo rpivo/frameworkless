@@ -8,6 +8,7 @@ A collection of opinionated resources to build web apps without a framework. The
 
 ## Development
 
+- [Adding TypeScript](https://github.com/rpivo/frameworkless/blob/main/development/addingTypeScript.md)
 - [Getting Node to Treat Modules as ES Modules](https://github.com/rpivo/frameworkless/blob/main/development/gettingNodeToTreatModulesAsEsModules.md)
 - [Implementing a Hot-Reloading Server](https://github.com/rpivo/frameworkless/blob/main/development/implementingAHotReloadingServer.md)
 - [Minifying Source Code During the Build Process](https://github.com/rpivo/frameworkless/blob/main/development/minifyingSourceCodeDuringTheBuildProcess.md)

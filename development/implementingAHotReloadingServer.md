@@ -1,6 +1,6 @@
 ## Implementing a Hot-Reloading Server
 
-#### Last Updated: May 18, 2021
+#### Last Updated: May 19, 2021
 
 This hot-reloading server implementation uses the [**EventSource** Web API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) to unidirectionally send pings from the server to the client whenever the client should refresh the page. The server will send a ping whenever the source code is rebuilt.
 
@@ -133,15 +133,15 @@ class Server {
    */
   openBrowser = () => {
     const { platform } = process;
-    spawn(
+
+    const openCommand =
       platform === "darwin"
         ? "open"
         : platform === "win32"
         ? "start"
-        : "xdg-open",
-      [`http://localhost:${this.port}`],
-      { stdio: "inherit" }
-    );
+        : "xdg-open";
+
+    spawn(openCommand, [`http://localhost:${this.port}`], { stdio: "inherit" });
   };
 }
 

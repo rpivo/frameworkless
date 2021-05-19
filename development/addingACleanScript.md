@@ -1,6 +1,6 @@
 ## Adding a Clean Script
 
-#### Last Updated: May 18, 2021
+#### Last Updated: May 19, 2021
 
 This script:
 

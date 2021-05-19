@@ -223,7 +223,7 @@ export default class Watcher extends EventEmitter {
    */
   injectEventSource = () => {
     let contents = fs.readFileSync(this.entryFile, { encoding: "utf-8" });
-    const eventSourceScript = `<script>const sse = new EventSource("/sse"); sse.onmessage = () => window.location.reload();</script>`;
+    const eventSourceScript = `<script>new EventSource("/sse").onmessage = () => window.location.reload();</script>`;
     contents = contents.replace(/\<\/body>/g, eventSourceScript + "</body>");
     fs.writeFileSync(this.entryFile, contents);
   };

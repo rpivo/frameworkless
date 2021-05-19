@@ -2,68 +2,35 @@
 
 #### Last Updated: May 18, 2021
 
-**clean.js**
+This hot-reloading server implementation uses the [**EventSource** Web API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) to unidirectionally send pings from the server to the client whenever the client should refresh the page. The server will send a ping whenever the source code is rebuilt.
 
-```js
-import fs from "fs";
-import path from "path";
+On starting the server, the browser will automatically open at `http://localhost:8000`.
 
-const cwd = process.cwd();
+<hr />
 
-const assetsFolder = "assets";
-const distFolder = "dist";
-const srcFolder = "src";
-const entryFile = "index.html";
+First, you can add a `serve` script to **package.json**. This will run **Server.js** inside a **util** folder.
 
-/**
- * ### copyAssets
- * copies each asset from a given assets folder to the output folder.
- */
-function copyAssets() {
-  const assets = fs.readdirSync(path.join(cwd, srcFolder, assetsFolder));
-
-  assets.forEach((asset) =>
-    fs.copyFileSync(
-      path.join(cwd, srcFolder, assetsFolder, asset),
-      path.join(cwd, distFolder, asset)
-    )
-  );
-}
-
-/**
- * ### copyEntryFile
- * copies the index.html file into the build folder.
- */
-function copyEntryFile() {
-  fs.copyFileSync(
-    path.join(cwd, srcFolder, entryFile),
-    path.join(cwd, distFolder, entryFile)
-  );
-}
-
-/**
- * ### regenerateOutputFolder
- * deletes the output folder and remakes it.
- */
-function regenerateOutputFolder() {
-  fs.rmSync(distFolder, { force: true, recursive: true });
-  fs.mkdirSync(distFolder);
-}
-
-/**
- * ### clean
- * starts clean process and prints progress logs.
- */
-function clean() {
-  console.log(`cleaning ${distFolder}.\n`);
-  regenerateOutputFolder();
-  copyEntryFile();
-  copyAssets();
-  console.log(`${distFolder} cleaned.\n`);
-}
-
-clean();
+```json
+"serve": "node ./util/Server.js",
 ```
+
+The **Server.js** file is a singleton class `Server`. At the bottom of this file, an instance of `Server` is exported.
+
+Inside the `Server` constructor, an instance of the `Watcher` class is constructed. This class extends from Node's `EventEmitter`, so it will be able to emit and listen to events. Here, you can listen to a custom event called `"refresh"`. When this event comes in, `this.shouldReload` will be set to `true`. This will signify to the `Server` that the `Watcher` has rebuilt the source code, and the `Server` can now refresh the page.
+
+The constructor also calls `init()`, which essentially just calls `http.createServer()`. This native Node method returns an instance of `http.Server`.
+
+When the `http.createServer()` method finishes creating an instance of `http.Server`, it will call the `openBrowser()` method callback, which opens the browser at `http://localhost:8000` to serve the application.
+
+The callback that's passed in as an argument to `http.createServer()` is automatically registered as the callback for the `"request"` event (as a convenience of using `http.createServer()`). Any file that the client requests will cause this callback to be called.
+
+Mostly, the internal logic for this callback handles the various files the server might request. Depending on the type of file requested (HTML/JS/CSS), the `Server` will need to respond with an appropriate `"Content-Type"` header so that the browser will know what to do with that file once it's received.
+
+The `if (filename.endsWith("/sse")) { ... }` branch determines whether or not the client should refresh. When the client first opens, a new `EventSource` instance is created (you'll see the code for this in **Watcher.js**). This `EventSource` will send a request to the `Server` for the `/sse` URL.
+
+`sse` here stands for [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events). The EventSource API is like a unidirectional WebSocket where the `Server` is able to ping the client, but not the other way around. This is a useful API in this scenario since we really only want to let the client know when it should refresh the page.
+
+When the `Server` receives the initial `/sse` connection request, it will start an interval heartbeat that occurs every 5 seconds. During each heartbeat, if `this.shouldReload` is true (which happens when the source code is rebuilt), the `Server` sends a `data: refresh` ping to the client. The `EventSource` instance in the client is listening for pings like these. When it receives this ping, it will refresh the page.
 
 **Server.js**
 
@@ -178,8 +145,20 @@ class Server {
   };
 }
 
-new Server();
+export default new Server();
 ```
+
+The `Watcher` class is responsible for cleaning the distribution folder, building the source code, and watching for any changes in the source code directory.
+
+In the constructor, the **Watcher** calls a `build()` method, which runs two npm commands (the details of which aren't included here): `clean` and `build`.
+
+These scripts can be implemented in whatever way you want; the important part is that the `clean` script should delete the distribution folder, remake it, and re-add any static files needed within the distribution folder, and the `build` script should build the source code and deposit the output in the distribution folder.
+
+After these two commands are finished, the `injectEventSource` method is called. This adds a development-only script to the entry file (`index.html`). The script creates a new `EventSource` instance that listens for pings at `/sse`. When it receives one, it refreshes the page.
+
+Once this initial build finishes, `fs.watch()` is called, which will watch for any changes inside of the source folder. If a change is saved, the `checkDebounce()` callback is called. This method will trigger a rebuild without multiple rebuilds being triggered in rapid succession.
+
+After each `build()` after the first, the `Watcher` will emit a `"refresh"` event. When the `Server` receives this event, it will send a ping to the client to refresh the page.
 
 **Watcher.js**
 
@@ -197,6 +176,8 @@ export default class Watcher extends EventEmitter {
 
     this.entryFile = path.join(cwd, "dist/index.html");
     this.srcPath = path.join(cwd, "src");
+
+    this.initialized = false;
 
     this.options = {
       cwd: this.srcPath,
@@ -222,7 +203,8 @@ export default class Watcher extends EventEmitter {
 
     this.debounce = null;
 
-    this.emit("refresh");
+    if (this.initialized) this.emit("refresh");
+    else this.initialized = true;
   };
 
   /**
@@ -250,6 +232,8 @@ export default class Watcher extends EventEmitter {
 
 ### Resources
 
+- [MDN / EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
+- [MDN / Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)
 - [Node / Child Process](https://nodejs.org/api/child_process.html)
 - [Node / Events](https://nodejs.org/api/events.html)
 - [Node / File System](https://nodejs.org/api/fs.html)

@@ -38,24 +38,22 @@ const entryFile = "index.html";
  */
 function copyAssets() {
   const assets = fs.readdirSync(path.join(cwd, srcFolder, assetsFolder));
-
-  assets.forEach((asset) =>
-    fs.copyFileSync(
-      path.join(cwd, srcFolder, assetsFolder, asset),
-      path.join(cwd, distFolder, asset)
-    )
+  copyFiles(
+    { from: path.join(srcFolder, assetsFolder), to: distFolder },
+    ...assets
   );
 }
 
 /**
- * ### copyEntryFile
- * copies the index.html file into the build folder.
+ * ### copyFiles
+ * copies a collection of files from the source folder to the distribution folder.
+ * @param { from, to } - the folder to copy from, and the folder to copy to (both strings).
+ * @param  {Array<string>} files - a collection of files (strings) to be copied.
  */
-function copyEntryFile() {
-  fs.copyFileSync(
-    path.join(cwd, srcFolder, entryFile),
-    path.join(cwd, distFolder, entryFile)
-  );
+function copyFiles({ from, to }, ...files) {
+  files.forEach((file) => {
+    fs.copyFileSync(path.join(from, file), path.join(to, file));
+  });
 }
 
 /**
@@ -74,7 +72,7 @@ function regenerateOutputFolder() {
 function clean() {
   console.log(`cleaning ${distFolder}.\n`);
   regenerateOutputFolder();
-  copyEntryFile();
+  copyFiles({ from: srcFolder, to: distFolder }, entryFile);
   copyAssets();
   console.log(`${distFolder} cleaned.\n`);
 }

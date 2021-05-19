@@ -1,6 +1,6 @@
 ## Adding a Dev Script That Watches for Changes
 
-#### Last Updated: May 18, 2021
+#### Last Updated: May 19, 2021
 
 You can add a `dev` script that watches for changes in a specified source code folder by using the `watch` method from Node's `fs` module.
 
@@ -35,7 +35,6 @@ const options = {
 let debounce = null;
 
 /**
- * ### build
  * runs the clean script followed by the build script. clears the debounce value after these
  * processes finish.
  */
@@ -47,7 +46,6 @@ function build() {
 }
 
 /**
- * ### checkDebounce
  * if debounce is falsy, sets debounce to a setTimeout that calls build() after half a second.
  */
 function checkDebounce() {
@@ -55,7 +53,6 @@ function checkDebounce() {
 }
 
 /**
- * ### init
  * runs initial build, and then calls fs.watch() to watch the srcPath for changes. If a change
  * occurs, it calls checkDebounce.
  */

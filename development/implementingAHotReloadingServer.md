@@ -56,7 +56,6 @@ class Server {
   }
 
   /**
-   * ### init
    * calls http.createServer to create an http.Server instance, and calls the openBrowser function
    * once `listen()` is called on the http.Server instance.
    */
@@ -128,7 +127,6 @@ class Server {
   };
 
   /**
-   * ### openBrowser
    * opens the default system browser and navigates to localhost at the given port.
    */
   openBrowser = () => {
@@ -189,7 +187,6 @@ export default class Watcher extends EventEmitter {
   }
 
   /**
-   * ### build
    * runs the clean script followed by the build script. calls injectEventSource() to inject the
    * EventSource js in the entry file. clears the debounce value after these processes finish.
    */
@@ -208,7 +205,6 @@ export default class Watcher extends EventEmitter {
   };
 
   /**
-   * ### checkDebounce
    * if debounce is falsy, sets debounce to a setTimeout that calls build() after half a second.
    */
   checkDebounce = () => {
@@ -216,7 +212,6 @@ export default class Watcher extends EventEmitter {
   };
 
   /**
-   * ### injectEventSource
    * when serving locally, the client will need an EventSource instance that will receive pings
    * from the server. When it receives these pings, the client will refresh the page. This
    * function injects the js in the entry file to add the EventSource for local development.

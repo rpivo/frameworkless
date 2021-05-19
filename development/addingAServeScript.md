@@ -1,6 +1,6 @@
 ## Adding a Serve Script
 
-#### Last Updated: May 16, 2021
+#### Last Updated: May 19, 2021
 
 You can add a `serve` script by using Node's `createServer()` method from the `http` module.
 
@@ -32,7 +32,6 @@ const outFolder = "dist";
 const port = 8000;
 
 /**
- * ### openBrowser
  * opens the default system browser and navigates to localhost at the given port.
  */
 function openBrowser() {
@@ -49,7 +48,6 @@ function openBrowser() {
 }
 
 /**
- * ### init
  * calls http.createServer to create an http.Server instance, and calls the openBrowser function
  * once `listen()` is called on the http.Server instance.
  */

@@ -33,7 +33,6 @@ const srcFolder = "src";
 const entryFile = "index.html";
 
 /**
- * ### copyAssets
  * copies each asset from a given assets folder to the output folder.
  */
 function copyAssets() {
@@ -45,7 +44,6 @@ function copyAssets() {
 }
 
 /**
- * ### copyFiles
  * copies a collection of files from the source folder to the distribution folder.
  * @param { from, to } - the folder to copy from, and the folder to copy to (both strings).
  * @param  {Array<string>} files - a collection of files (strings) to be copied.
@@ -57,7 +55,6 @@ function copyFiles({ from, to }, ...files) {
 }
 
 /**
- * ### regenerateOutputFolder
  * deletes the output folder and remakes it.
  */
 function regenerateOutputFolder() {
@@ -66,7 +63,6 @@ function regenerateOutputFolder() {
 }
 
 /**
- * ### clean
  * starts clean process and prints progress logs.
  */
 function clean() {
